@@ -4,10 +4,15 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
-typedef int t_int;
-#define maxActVal 10
-#define INTERFACE 0
 
+
+//////////////////////CONFIG//////////////////////
+typedef int t_int;
+// value for random filling
+#define maxActVal 100
+//switch to use interface, if off test_cases are on
+#define INTERFACE false
+//////////////////////////////////////////////////
 
 void randPrices(t_int* daysTable, t_int numberOfDays)
 {
@@ -16,6 +21,14 @@ void randPrices(t_int* daysTable, t_int numberOfDays)
         daysTable[i] = (1 + rand() % (( maxActVal + 1 ) - 1));
     }
 
+}
+bool checkResult(t_int first, t_int last, t_int* answer)
+{
+    if( first == answer[0] && last == answer[1] )
+    {
+        return true;
+    }
+    return false;
 }
 t_int* getDays(t_int numberOfDays, t_int actionPrice, t_int* daysTable)
 {
@@ -45,43 +58,26 @@ t_int* getDays(t_int numberOfDays, t_int actionPrice, t_int* daysTable)
 
     return returnVal;
 }
-t_int* fillDays(t_int numberOfDays, char* str)
-{
-    t_int* tabOfDays = (t_int*)malloc(sizeof(t_int) * numberOfDays);
 
-    printf("%s", str);
-//    char *pChar = strtok (str, " ");
-//    int i = 0;
-//    while(pChar != NULL)
-//    {
-
-//      //  tabOfDays[i] = 1;//tabOfDays[i] * 10 + pChar - '0';
-//        printf("%d %s", i, pChar);
-//        pChar = strtok(NULL, " ");
-//        ++i;
-//    }
-
-    return tabOfDays;
-
-}
 void test_cases()
 {
+    t_int testTab[] = {1, 3, 5, 2, 3, 4, 3};
 
-    t_int numberOfDays = 5;
-    t_int actionPrice = 1;
-    char* words = (char*)malloc(sizeof(char) * 256);
+    t_int* getD = getDays(7, 3, testTab);
+    assert( checkResult(2, 7, getD) == true);
+    free(getD);
 
-       strcpy(words, "4 3 2 1 5");
-     printf(" Pokaz \n");
-    t_int* tabOfDays = fillDays(numberOfDays, words);
 
-    for(int i = 0; i < numberOfDays; ++i)
-    {
-        printf(" - %d", tabOfDays);
-    }
+    t_int testTab2[] = {2, 3, 4, 5};
+    getD = getDays(4, 2, testTab2);
+    assert( checkResult(1, 1, getD) == true);
+    free(getD);
 
-    free(tabOfDays);
 
+    t_int testTab3[] = {5, 3, 1};
+    getD = getDays(3, 2, testTab3);
+    assert( checkResult(-1, -1, getD) == true);
+    free(getD);
 
 }
 
@@ -91,53 +87,57 @@ int main()
 
     test_cases();
 
-    if( INTERFACE )
+    if( !INTERFACE )
     {
-                t_int numberOfDays = 1;
-                t_int actionPrice = 1;
-                t_int* tabOfDays;
+        test_cases();
+    }
+    else
+    {
+        t_int numberOfDays = 1;
+        t_int actionPrice = 1;
+        t_int* tabOfDays;
 
-                // printf("Podaj ilosc dni oraz cene akcji do wyszukania: ");
-                scanf("%d %d", &numberOfDays, &actionPrice);
-                tabOfDays = (t_int*)malloc(sizeof(t_int) * numberOfDays);
-                memset(tabOfDays, 0, numberOfDays);
+        // printf("Podaj ilosc dni oraz cene akcji do wyszukania: ");
+        scanf("%d %d", &numberOfDays, &actionPrice);
+        tabOfDays = (t_int*)malloc(sizeof(t_int) * numberOfDays);
+        memset(tabOfDays, 0, numberOfDays);
 
-                // printf("\nPodaj ceny akcji w kolejnych dniach, oddzielajac spacja, zostaw puste, aby wygenerowac losowo: \n");
-                getchar();
-                int i = 0;
-                char c;
-                while ((c = getchar()) != '\n')
-                {
-                    if(i >= numberOfDays)
-                        break;
-                    if( c != ' ')
-                    {
-                        tabOfDays[i] = tabOfDays[i] * 10 + c - '0';
-                    }
-                    else
-                    {
-                        ++i;
-                    }
-                }
+        // printf("\nPodaj ceny akcji w kolejnych dniach, oddzielajac spacja, zostaw puste, aby wygenerowac losowo: \n");
+        getchar();
+        int i = 0;
+        char c;
+        while ((c = getchar()) != '\n')
+        {
+            if(i >= numberOfDays)
+                break;
+            if( c != ' ')
+            {
+                tabOfDays[i] = tabOfDays[i] * 10 + c - '0';
+            }
+            else
+            {
+                ++i;
+            }
+        }
 
-                if( i == 0 )
-                {
-                      randPrices(tabOfDays, numberOfDays);
-                      for(int i = 0; i < numberOfDays; ++i)
-                           printf(" %d ", tabOfDays[i]);
-                }
+        if( i == 0 )
+        {
+              randPrices(tabOfDays, numberOfDays);
+              for(int i = 0; i < numberOfDays; ++i)
+                   printf("%d ", tabOfDays[i]);
+        }
 
 
-                t_int* returnVal = getDays(numberOfDays, actionPrice, tabOfDays);
+        t_int* returnVal = getDays(numberOfDays, actionPrice, tabOfDays);
 
-                printf(" \n%d %d", returnVal[0], returnVal[1]);
-                // for(int i = 0; i < numberOfDays; ++i)
-                    //     printf(" %d ", tabOfDays[i]);
+        printf("\n%d %d\n", returnVal[0], returnVal[1]);
+        // for(int i = 0; i < numberOfDays; ++i)
+            //     printf(" %d ", tabOfDays[i]);
 
-                free(tabOfDays);
+        free(tabOfDays);
     }
 
 
 
 }
-s
+
