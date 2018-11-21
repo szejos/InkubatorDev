@@ -12,6 +12,7 @@
 // <=  - eq 121
 // >=  - eq 123
 
+#define MAX_LENGTH 1024
 
 int calcComp(char* comp)
 {
@@ -23,8 +24,9 @@ int calcComp(char* comp)
     }
     return asci;
 }
-void switchFlag(int flag, int comp, char* answer)
+bool switchFlag(int flag, int comp)
 {
+    bool ret = false;
     // If there were no diff between numbers, launch this case, otherwise launch lower cases
     if( flag  == 0 )
     {
@@ -33,12 +35,12 @@ void switchFlag(int flag, int comp, char* answer)
             case 121:
             case 122:
             case 123:
-                strncpy(answer, "TAK", 3);
+                ret = true;
             break;
             case 60:
             case 62:
             case 94:
-                strncpy(answer, "NIE", 3);
+                ret = false;
             break;
         }
     }
@@ -49,12 +51,12 @@ void switchFlag(int flag, int comp, char* answer)
             case 123:
             case 62:
             case 94:
-                strncpy(answer, "TAK", 3);
+                ret = true;
             break;
             case 122:
             case 60:
             case 121:
-                strncpy(answer, "NIE", 3);
+                ret = false;
             break;
         }
 
@@ -66,18 +68,19 @@ void switchFlag(int flag, int comp, char* answer)
             case 121:
             case 60:
             case 94:
-                strncpy(answer, "TAK", 3);
+                ret = true;
             break;
             case 122:
             case 123:
             case 62:
-                strncpy(answer, "NIE", 3);
+                ret = false;
             break;
         }
 
     }
+    return ret;
 }
-void equalComp(char* first, char* second, int comp, int fnL, int snL, char* answer)
+bool equalComp(char* first, char* second, int comp, int fnL, int snL)
 {
     // easy way for holding answer
     int flag = 0;
@@ -100,55 +103,49 @@ void equalComp(char* first, char* second, int comp, int fnL, int snL, char* answ
             break;
     }
 
-    switchFlag(flag, comp, answer);
+    return switchFlag(flag, comp);
 
 }
-char* doCompare(char* first, char* second, char* comp, int fnL, int snL)
+bool doCompare(char* first, char* second, char* comp, int fnLength, int snLength)
 {
     int size = calcComp(comp);
-    char* answer = (char*)malloc(sizeof(char) * 4);
-    if( fnL < snL )
+    bool ret = false;
+    if( fnLength < snLength )
     {
        if ( size == 94 || size == 60 )
        {
-
-           strncpy(answer, "TAK", 3);
+            ret = true;
        }
        else
        {
-           strncpy(answer, "NIE", 3);
+           ret = false;
        }
     }
-    else if( fnL > snL )
+    else if( fnLength > snLength )
     {
        if ( size == 62 || size == 94 )
        {
-           strncpy(answer, "TAK", 3);
+           ret = true;
        }
        else
        {
-           strncpy(answer, "NIE", 3);
+           ret = false;
        }
     }
-    else if ( fnL == snL )
+    else if ( fnLength == snLength )
     {
-        equalComp(first, second, size, fnL, snL, answer);
+        ret = equalComp(first, second, size, fnLength, snLength);
     }
     else
     {
-        printf(" UNDEFINED BEH ");
-        strncpy(answer, "NIE", 3);
-
+        printf(" UNDEFINED BEH \n");
+        ret = false;
     }
 
-    printf("  %s %s %s   ---  %s   --- \n", first, comp, second, answer);
-    return answer;
-
-
+    return ret;
 }
-char* getNumbersAndCompare(char* word)
+bool getNumbersAndCompare(char* word)
 {
-
    unsigned int firstNumberLength = 0;
    unsigned int secondNumberLength = 0;
    char* firstNumber = NULL;
@@ -156,6 +153,7 @@ char* getNumbersAndCompare(char* word)
    char* comp = NULL;
    char* pChar;
    short indeks = 1;
+   bool ret = false;
 
    // extract numbers and comparator
    pChar = strtok (word, " ");
@@ -164,56 +162,71 @@ char* getNumbersAndCompare(char* word)
        switch(indeks)
        {
         case 1:
-
             firstNumberLength = strlen(pChar);
             firstNumber = (char*)malloc(firstNumberLength * sizeof(char));
             strcpy(firstNumber, pChar);
-              //printf("%d-%s\n ", (sizeof(pChar)/sizeof(char*)), pChar);
-           // printf("%d-%s\n ", strlen(firstNumber), firstNumber);
         break;
         case 2:
-
-           comp = (char*)malloc(strlen(pChar) * sizeof(char));
-           strcpy(comp, pChar);
-           //printf("%d-%s ", strlen(comp), comp);
+            comp = (char*)malloc(strlen(pChar) * sizeof(char));
+            strcpy(comp, pChar);
         break;
         case 3:
-          secondNumberLength = strlen(pChar);
-          secondNumber = (char*)malloc(secondNumberLength * sizeof(char));
-          strcpy(secondNumber, pChar);
-          //printf("%d-%s ", strlen(secondNumber), secondNumber);
+            secondNumberLength = strlen(pChar);
+            secondNumber = (char*)malloc(secondNumberLength * sizeof(char));
+            strcpy(secondNumber, pChar);
         break;
        }
        ++indeks;
        pChar = strtok(NULL, " ");
-
    }
+   ret = doCompare(firstNumber, secondNumber, comp, firstNumberLength, secondNumberLength);
+   free(firstNumber);
+   free(secondNumber);
+   free(comp);
 
-   doCompare(firstNumber, secondNumber, comp, firstNumberLength, secondNumberLength);
-
-   return comp;
+   return ret;
 }
 
 void test_cases()
 {
-    char* words = (char*)malloc(sizeof(char) * 256);
+    char* words = (char*)malloc(sizeof(char) * MAX_LENGTH);
+    strcpy(words, "1 < 2");
 
-    strcpy(words, "10113453453111 < 10113453453110");
+    bool ans = getNumbersAndCompare(words);
+    assert ( ans ==  true );
+
+    strcpy(words, "11111 > 11111");
+    ans = getNumbersAndCompare(words);
+    assert ( ans == false );
 
 
-    getNumbersAndCompare(words);
+    strcpy(words, "2222 != 312");
+    ans = getNumbersAndCompare(words);
+    assert ( ans == true );
 
 
+    strcpy(words, "9998278273723 < 21893712893711111");
+    ans = getNumbersAndCompare(words);
+    assert ( ans == true );
 
+
+    strcpy(words, "12121234142342342455654634 == 12121234142342342455654634");
+    ans = getNumbersAndCompare(words);
+    assert ( ans == true );
+
+
+    strcpy(words, "12121234142342342455654634 != 12121234142342342455654634");
+    ans = getNumbersAndCompare(words);
+    assert ( ans == false );
+
+
+    //  answer = (ret) ? strncpy(answer, "TAK", 3) : strncpy(answer, "NIE", 3);
     free(words);
-
 }
 
 int main(int argc, char *argv[])
 {
-
     test_cases();
-
     return 0;
 }
 
