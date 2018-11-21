@@ -17,6 +17,7 @@
 std::string makeHist(int diceRolls, const std::vector<int>& rollsResult)
 {
     std::string hist;
+    std::string temp;
     bool flag = false;
     int maxRes = *std::max_element(rollsResult.begin(), rollsResult.end() );
 
@@ -30,13 +31,11 @@ std::string makeHist(int diceRolls, const std::vector<int>& rollsResult)
     {
         for(int i = 0; i < DICESIDES; ++i )
         {
+            if( rollsResult.at(i) > 9 )
+                flag = true;
 
             if( dice ==  rollsResult.at(i)  && dice != 0 )
             {
-                if( rollsResult.at(i) > 9 )
-                    flag = true;
-
-
 
                 hist.append( std::to_string(dice) );
                // if( flag )
@@ -45,24 +44,25 @@ std::string makeHist(int diceRolls, const std::vector<int>& rollsResult)
             }
             else if( dice < rollsResult.at(i) )
             {
-                if( flag )
-                    hist.append("# ");
-                else
+                //if( flag )
+                  //  hist.append("# ");
+              //  else
                     hist.append("#");
             }
             else
             {
-                if( flag )
-                    hist.append("  ");
-                else
+                //if( flag )
+                //    hist.append("  ");
+             //   else
+
                     hist.append(" ");
             }
 
             if( i < DICESIDES - 1 )
             {
-                if( flag )
-                    hist.append("  ");
-                else
+               // if( flag )
+                //    hist.append("  ");
+               // else
                     hist.append(" ");
             }
 
@@ -95,8 +95,10 @@ std::string makeHist(int diceRolls, const std::vector<int>& rollsResult)
 
 void test_cases()
 {
-    int diceRolls = 100;
-    std::vector<int> rollsResult = {10, 10, 20, 20, 20, 20};
+    int diceRolls = 26;
+    std::vector<int> rollsResult = {7, 3, 10, 1, 0, 5};
+    //int diceRolls = 100;
+   // std::vector<int> rollsResult = {10, 10, 20, 20, 20, 20};
     std::string val = makeHist(diceRolls, rollsResult);
 
     std::cout<<val<<std::endl;
