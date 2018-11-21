@@ -32,14 +32,21 @@ bool checkBracesOrder(const std::string& braces)
         }
         else
         {
-             if ( isPair(_stack.top(), c) && _stack.size() != 0 )
-             {
-                  _stack.pop();
-             }
-             else
-             {
-                 return false;
-             }
+            if( _stack.size() > 0 )
+            {
+                if ( isPair(_stack.top(), c)  )
+                {
+                     _stack.pop();
+                }
+                else
+                {
+                     return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
         }
 
     }
@@ -59,6 +66,8 @@ void test_cases()
         assert(checkBracesOrder("[({})](]") == false);
 
         assert(checkBracesOrder("({[]}[]{})") == true);
+
+        assert(checkBracesOrder("])") == false);
 
 }
 
