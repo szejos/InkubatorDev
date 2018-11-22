@@ -12,7 +12,7 @@
 // <=  - eq 121
 // >=  - eq 123
 
-#define MAX_LENGTH 1024
+
 
 int calcComp(char* comp)
 {
@@ -163,16 +163,16 @@ bool getNumbersAndCompare(char* word)
        {
         case 1:
             firstNumberLength = strlen(pChar);
-            firstNumber = (char*)malloc(firstNumberLength * sizeof(char));
+            firstNumber = (char*)malloc((1 + firstNumberLength) * sizeof(char));
             strcpy(firstNumber, pChar);
         break;
         case 2:
-            comp = (char*)malloc(strlen(pChar) * sizeof(char));
+            comp = (char*)malloc((1 + strlen(pChar)) * sizeof(char));
             strcpy(comp, pChar);
         break;
         case 3:
             secondNumberLength = strlen(pChar);
-            secondNumber = (char*)malloc(secondNumberLength * sizeof(char));
+            secondNumber = (char*)malloc((1 + secondNumberLength) * sizeof(char));
             strcpy(secondNumber, pChar);
         break;
        }
@@ -189,6 +189,7 @@ bool getNumbersAndCompare(char* word)
 
 void test_cases()
 {
+    const int MAX_LENGTH = 1024;
     char* words = (char*)malloc(sizeof(char) * MAX_LENGTH);
     strcpy(words, "1 < 2");
 
