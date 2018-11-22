@@ -19,11 +19,11 @@ std::vector<int> stringToVector(int patchesNr, const std::string str)
     int number;
     while ( iss >> number && --patchesNr >= 0 )
     {
-       if( std::isnan( number) )
-       {
-           std::cout << " Not a number, rolling out" << std::endl;
-          // exit(1);
-       }
+//       if( std::isnan( number) )
+//       {
+//           std::cout << " Not a number, rolling out" << std::endl;
+//          // exit(1);
+//       }
 
        myNumbers.push_back( number );
     }
