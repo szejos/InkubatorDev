@@ -56,7 +56,6 @@ bool checkBracesOrder(const std::string& braces)
 
 void test_cases()
 {
-
         assert(checkBracesOrder("([{}])[]") == true);
 
         assert(checkBracesOrder("(]") == false);
@@ -68,7 +67,6 @@ void test_cases()
         assert(checkBracesOrder("({[]}[]{})") == true);
 
         assert(checkBracesOrder("])") == false);
-
 }
 
 int main(int argc, char *argv[])
