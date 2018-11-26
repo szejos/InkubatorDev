@@ -1,15 +1,13 @@
 #include <assert.h>
 #include <string>
 #include <iostream>
-#include <vector>
 #include <algorithm>
 #include <cmath>
-#include <sstream>
 #include <map>
 
 std::string makeRoman(int year)
 {
-    std::map<int, std::string> mapOfRom = { {1, "I"}, {4, "IV"}, {5, "V"}, {9, "IX"},
+    const static std::map<int, std::string> mapOfRom = { {1, "I"}, {4, "IV"}, {5, "V"}, {9, "IX"},
                                             {10, "X"}, {40, "XL"}, {50, "L"}, {90, "XC"},
                                             {100, "C"}, {400, "CD"}, {500, "D"}, {900, "CM"}, {1000, "M"} };
 
@@ -19,41 +17,37 @@ std::string makeRoman(int year)
     {
         for(auto it = mapOfRom.rbegin(); it != mapOfRom.rend(); ++it)
         {
-            if( (year / it->first) )
+            if( (year / it->first) > 0)
             {
                 returnStr += it->second;
                 year = year - it->first;
                 break;
             }
-
         }
     }
     return returnStr;
-
 }
 
 
 void test_cases()
 {
 
-        std::string test = makeRoman(1000);
 
-        assert(test == "M");
+        assert(makeRoman(1000) == "M");
 
-        test = makeRoman(2008);
-        assert(test == "MMVIII");
+        assert(makeRoman(2008) == "MMVIII");
 
-        test = makeRoman(1666);
-        assert(test == "MDCLXVI");
+        assert(makeRoman(1666) == "MDCLXVI");
 
-        test = makeRoman(1990);
-        assert(test == "MCMXC");
+        assert(makeRoman(3422) == "MMMCDXXII");
 
-        test = makeRoman(1);
-        assert(test == "I");
+        assert(makeRoman(1990) == "MCMXC");
 
-        test = makeRoman(0);
-        assert(test == "");
+        assert(makeRoman(9876) == "MMMMMMMMMDCCCLXXVI");
+
+        assert(makeRoman(1) == "I");
+
+        assert( makeRoman(0) == "");
 
 
 }
@@ -65,10 +59,7 @@ int main()
         test_cases();
 
 
-
-
-
-return 0;
+        return 0;
 }
 
 
