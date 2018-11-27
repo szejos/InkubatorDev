@@ -11,138 +11,99 @@
 // >   - eq 62
 // <=  - eq 121
 // >=  - eq 123
+enum eCompSign {EQ = 122, NOTQ = 94, LESS = 60, GRT = 62, LESSEQ = 121, GRTEQ = 123};
 
 
-
-int calcComp(char* comp)
+short calcComp(const char* comp)
 {
-    int size = strlen(comp);
-    int asci = 0;
+    const short size = strlen(comp);
+    short asci = 0;
     for(short i = 0; i < size; ++i)
     {
         asci += comp[i];
     }
     return asci;
 }
-bool switchFlag(int flag, int comp)
+bool switchFlag(const enum eCompSign flag, const short compareSign)
 {
-    bool ret = false;
-    // If there were no diff between numbers, launch this case, otherwise launch lower cases
-    if( flag  == 0 )
-    {
-        switch(comp)
-        {
-            case 121:
-            case 122:
-            case 123:
-                ret = true;
-            break;
-            case 60:
-            case 62:
-            case 94:
-                ret = false;
-            break;
-        }
-    }
-    else if( flag == 1 ) // if it was greater
-    {
-        switch(comp)
-        {
-            case 123:
-            case 62:
-            case 94:
-                ret = true;
-            break;
-            case 122:
-            case 60:
-            case 121:
-                ret = false;
-            break;
-        }
+    bool retFlag = false;
+    // switch according to value of compareSign
 
-    }
-    else // if it was smaller
+    switch(compareSign)
     {
-        switch(comp)
-        {
-            case 121:
-            case 60:
-            case 94:
-                ret = true;
-            break;
-            case 122:
-            case 123:
-            case 62:
-                ret = false;
-            break;
-        }
-
+        case LESSEQ:
+            retFlag = ( flag == EQ || flag == LESS ) ? true : false;
+        break;
+        case EQ:
+            retFlag = ( flag == EQ ) ? true : false;
+        break;
+        case GRTEQ:
+            retFlag = ( flag == EQ || flag == GRT) ? true : false;
+        break;
+        case LESS:
+            retFlag = ( flag == LESS ) ? true : false;
+        break;
+        case GRT:
+            retFlag = ( flag == GRT ) ? true : false;
+        break;
+        case NOTQ:
+            retFlag = ( flag != EQ ) ? true : false;
+        break;
     }
-    return ret;
+
+
+    return retFlag;
 }
-bool equalComp(char* first, char* second, int comp, int fnL, int snL)
+bool equalComp(char* firstNumber, char* secondNumber, const short compareSign, const unsigned int firstNumberLength, const unsigned int secondNumberLength)
 {
     // easy way for holding answer
-    int flag = 0;
-    for( int i = 0; i < fnL; ++i )
+    enum eCompSign flag = EQ;
+    for( int i = 0; i < firstNumberLength; ++i )
     {
-        if( first[i] == second[i] )
+        if( firstNumber[i] == secondNumber[i] )
         {
             continue;
         }
-        else if ( first[i] > second[i] )
+        else if ( firstNumber[i] > secondNumber[i] )
         {
-            flag = 1;
+            flag = GRT;
         }
         else
         {
-            flag = 2;
+            flag = LESS;
         }
 
         if( flag != 0 )
             break;
     }
-
-    return switchFlag(flag, comp);
+    return switchFlag(flag, compareSign);
 
 }
-bool doCompare(char* first, char* second, char* comp, int fnLength, int snLength)
+bool doCompare(char* firstNumber, char* secondNumber, char* compareSign, const unsigned int firstNumberLength, const unsigned int secondNumberLength)
 {
-    int size = calcComp(comp);
-    bool ret = false;
-    if( fnLength < snLength )
+    const short size = calcComp(compareSign);
+    bool retFlag = false;
+    if( firstNumberLength < secondNumberLength )
     {
-       if ( size == 94 || size == 60 )
-       {
-            ret = true;
-       }
-       else
-       {
-           ret = false;
-       }
+        retFlag = (size == NOTQ || size == LESS) ? true : false;
+
     }
-    else if( fnLength > snLength )
+    else if( firstNumberLength > secondNumberLength )
     {
-       if ( size == 62 || size == 94 )
-       {
-           ret = true;
-       }
-       else
-       {
-           ret = false;
-       }
+        retFlag = (size == GRT || size == NOTQ) ? true : false;
+
     }
-    else if ( fnLength == snLength )
+    else if ( firstNumberLength == secondNumberLength )
     {
-        ret = equalComp(first, second, size, fnLength, snLength);
+        retFlag = equalComp(firstNumber, secondNumber, size, firstNumberLength, secondNumberLength);
     }
     else
     {
         printf(" UNDEFINED BEH \n");
-        ret = false;
+        retFlag = false;
     }
 
-    return ret;
+    return retFlag;
 }
 bool getNumbersAndCompare(char* word)
 {
@@ -150,10 +111,10 @@ bool getNumbersAndCompare(char* word)
    unsigned int secondNumberLength = 0;
    char* firstNumber = NULL;
    char* secondNumber = NULL;
-   char* comp = NULL;
+   char* compareSign = NULL;
    char* pChar;
    short indeks = 1;
-   bool ret = false;
+   bool retFlag = false;
 
    // extract numbers and comparator
    pChar = strtok (word, " ");
@@ -167,8 +128,8 @@ bool getNumbersAndCompare(char* word)
             strcpy(firstNumber, pChar);
         break;
         case 2:
-            comp = (char*)malloc((1 + strlen(pChar)) * sizeof(char));
-            strcpy(comp, pChar);
+            compareSign = (char*)malloc((1 + strlen(pChar)) * sizeof(char));
+            strcpy(compareSign, pChar);
         break;
         case 3:
             secondNumberLength = strlen(pChar);
@@ -179,12 +140,12 @@ bool getNumbersAndCompare(char* word)
        ++indeks;
        pChar = strtok(NULL, " ");
    }
-   ret = doCompare(firstNumber, secondNumber, comp, firstNumberLength, secondNumberLength);
+   retFlag = doCompare(firstNumber, secondNumber, compareSign, firstNumberLength, secondNumberLength);
    free(firstNumber);
    free(secondNumber);
-   free(comp);
+   free(compareSign);
 
-   return ret;
+   return retFlag;
 }
 
 void test_cases()
